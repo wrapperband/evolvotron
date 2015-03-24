@@ -1,0 +1,79 @@
+.TH EVOLVOTRON_RENDER 1 "16 Oct 2009" "www.timday.com" "Evolvotron"
+
+.SH NAME
+evolvotron_render \- Render an evolvotron function tree to an image.
+
+.SH SYNOPSIS
+evolvotron_render
+[options]
+.I imagefile.[png|ppm]
+
+.SH DESCRIPTION
+
+.B evolvotron_render 
+reads an evolvotron image function from its
+standard input and renders it to an image in the file specified
+(suffix determines type, defaults to ppm if not recognised).
+
+Image functions can be obtained by saving them from the
+evolvotron applicaiton, or using evolvotron_mutate.
+
+See the evolvotron manual (accessible from the evolvotron
+application's Help menu) for more information on image functions.
+
+.SH COMMAND-LINE OPTIONS
+
+.TP 0.5i
+.B \-f, \-\-frames
+.I frames
+Generates multi-frame animations.  .fnnnnnn is inserted into
+the specified filename (before the filetype suffix, if any).
+You can use this on functions which weren't evolved in animation mode,
+but there's no guarantee they have any interesting time/z variation.
+
+.TP 0.5i
+.B \-h, \-\-help
+Display a summary of command-line options and exit.
+
+.TP 0.5i
+.B \-j, \-\-jitter
+Enable sample jittering.
+
+.TP 0.5i
+.B \-m, \-\-multisample
+.I multisample
+Enables antialiased rendering.
+This specifies the size of the sub-pixel sampling grid,
+so 1 provides the default one-sample-per-pixel behaviour,
+while 4 provides 16 samples per pixel on a 4x4 grid.
+Unlike the main evolvotron application, there is no upper limit,
+but of course rendering time increases as the square of this number.
+
+.TP 0.5i
+.B \-o, \-\-output
+.I imagefile.[ppm|png]
+This option is an alternative to specifying the output filename as a positional argument.
+
+.TP 0.5i
+.B \-s, \-\-size
+.I widthxheight
+Specify resolution of output image.
+Defaults to 512x512.
+
+.TP 0.5i
+.B \-v, \-\-verbose
+Verbose mode; useful for monitoring progress of large renders.
+
+.SH EXAMPLES
+
+evolvotron_mutate \-g | evolvotron_render \-s 1024x1024 function.ppm
+
+.SH AUTHOR
+.B evolvotron_render
+was written by Tim Day (www.timday.com) and is released
+under the conditions of the GNU General Public License.
+See the file LICENSE supplied with the source code for details.
+
+.SH SEE ALSO
+
+evolvotron(1), evolvotron_mutate(1)

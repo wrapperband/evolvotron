@@ -1,0 +1,250 @@
+[Most recent at top]
+
+From release 0.6.2:
+ - Version to 0.6.3
+ - Files derived from USAGE (evolvotron.html and usage_text.h) are now under
+   svn control and no longer need to be generated as part of the build of a
+   fresh checkout.
+ - Migrated to new SourceForge platform.
+   Needed: svn switch --relocate https://evolvotron.svn.sourceforge.net/svnroot/evolvotron "svn+ssh://timday@svn.code.sf.net/p/evolvotron/code/"
+   
+From release 0.6.1:
+ - Version to 0.6.2
+ - CHANGES renamed to NEWS
+ - License boilerplate managed using "headache"
+ - Add some "tartan" inspired functions.
+ - Add pixel/voxel/hex grid quantizing functions.
+ - Port command line options to boost::program_options,
+   rationalize commandline options.
+ - Fix to evolvotron_mutate from Pedro Gimeno.
+ - Update mkdeb script to work on squeeze
+ - Functions to be loaded on startup can be specified on the commandline.
+ - Add option to shuffle startup functions.
+ 
+From release 0.6.0:
+ - Version to 0.6.1
+ - Fix bug in saved functions: quotes missing around version attribute
+
+From release 0.5.1:
+ - Version to 0.6.0
+ - Switch to Qt4.
+ - (Qt4 related) keyboard shortcuts rationalized
+   many removed, ctrl-modifiers dropped
+ - (Qt4 related) image displays now have a frame around them
+ - (Qt4 related) Remove non-standard Qt animated PNG support
+ - evolvotron_match removed
+ - Platform specific code (e.g number of processors identification)
+   isolated in libevolvotron/platform_specific.[h|cpp]
+   and selected by PLATFORM_LINUX or PLATFORM_BSD
+   (Fink Qt's __DARWIN_X11__ also detected and used to select PLATFORM_BSD).
+ - Repository migrated to svn
+
+From release 0.5.0:
+ - Version to 0.5.1
+ - Replace not often used frontside heating/cooling buttons with autocooling mechanism.
+ - Separate tabs for info & license on "About" dialog.
+ - Better formatting of function properties dialog, and also shows XML function tree.
+ - Dialog with rendering controls
+ - Multisampling (antialiasing) options
+ - -a/-j/-s command line options for autocool/jitter/multisample
+ - evolvotron_render adds -j/-s to control jitter & multisampling
+ - Option (-E) of separate thread pool (with different nices: -n/-N) for enlargements.
+   Task totals for each reported separately.
+ - Enlargement and solo renderings are fragmented into multiple smaller
+   jobs to better utilize multiprocessor systems.
+ - Generally better use of ref-counted QImage and QPixmap.
+ - Middle-mouse drag adjustments flicker less.
+
+From release 0.4.0:
+ - Version to 0.5.0
+ - Lists of functions in alphabetic order.
+ - New FunctionTop always at top level.
+ - New functions: Frieze groups.
+ - Constantness of functions more conservative (less overrides) and hopefully less buggy.
+ - Final colour space transform range more constrained to keep colours sane.
+ - More sensible mutation of top level spatial transform (less arbitrary shearing).
+ - Note that above changes mean old saved functions will appear different.
+ - New mutation parameter: probability of a function's parameters being reset.
+ - Code clean up:
+   - More std::auto_ptr, boost::shared_ptr, boost::ptr_vector.  Code is now delete free.
+   - Get rid of hacked static function registration; uses auto-generated register_all_functions.
+ - Compute threads use QWaitCondition, not polling.
+ - Default number of threads is number of processors.
+ - Compute threads run at lower priority.
+ - -n <niceness> command line option to control compute thread priority.
+   (NB assumes Linux NPTL's non-Posix compliant behaviour of threads NOT sharing a common nice value;
+   see "man pthreads" on Linux.)
+ - About dialog displays number of threads.
+ - Use precompiled headers (build time 2m45s down to 1m45s).
+ - code_review script
+ - Set an icon on various dialogs and main frame.
+ - Add -D (function debug) massively weighting in favour of FunctionNoiseOneChannel.  Useful with -x/-X.
+ - Believed to fix Debian bug #436231 and gentoo #144160
+ - MutatableImage has serial number (fix problems caused by pointer value being wrongly used as equivalent)
+
+From release 0.3.1:
+ - Version to 0.4.0
+ - Lock state moved to mutatable image so is stored in undo history
+ - Mandelbrot & Julia set only in x,y plane.  Julia set uses fixed parameters.
+ - Add Juliabrot.
+ - Fix "Randomize" button on "All" functions tab.
+ - "Favourite" function dialog provides access to -x/-X command-line functionality
+ - Undo after reset works better
+ - Fix broken FunctionGradient.
+   Replace with GradientOfMagnitude, DivergenceOfMagnitude, Divergence, Curl
+ - Migrate float->double via typedef real
+ - Always builds with fullscreen option.
+
+From release 0.3.0:
+ - Version to 0.3.1
+ - Fix for gcc 3.4
+ - ./configure made (slightly) more robust
+
+From release 0.2.3:
+ - Version to 0.3.0
+ - Get rid of troublesome system call to ../VERSION 
+   in common.pro and pass settings from configure script instead
+ - Add not-very-useful .qt-mng image file output format
+ - Add function stats to Properties dialog
+ - Add function simplification (more useful for debugging than anything)
+ - Don't use True and False in doc-building python script
+   (seems to be quite new thing, not in 2.1.x ?).  Use 0 and 1 instead.
+ - Internal changes
+ - Add pkg/debian .deb builder script (still under development)
+ - Fix buggy Y rotation matrix
+ - Eliminate template-tastic Tuple and Matrix classes.
+   Fix XYZ and Transform to not require them.
+ - evolvotron_mutate - -g option more likely to generate insteresting functions
+ - -linz and -spheremap options where appropriate
+ - evolvotron_match utility.
+ - New dialog for function weightings (not fully implemented)
+
+From release 0.2.2:
+ - Version to 0.2.3
+ - Break out USAGE file from README
+ - Add text_to_markup.py script to prettify USAGE file, used from configure
+ - Add quick reference and user manual accessible from help menu
+
+From release 0.2.1:
+ - Version to 0.2.2
+ - CPU type an option to ./configure (p3,p4,xp supported)
+ - Build option for fullscreen & menu-hiding modes (from keyboard or command-line)
+ - Fullscreen mode for "Big" image displays
+ - Change default grid to 6x5 (would sooner have fat than thin images)
+
+From release 0.2.0:
+ - Bump version to 0.2.1
+ - Display (not compute) priority to higher resolution images
+   (saves time enlarging low res images unnecessarily)
+ - Blank images on replacement (above change makes this more necessary)
+ - Round-robin dispatch of done tasks to displays means redisplay more balanced.
+ - -x and -X command line options to specify specifc top level function types.
+ - FunctionKaleidoscope*, FunctionWindmill*, FunctionSeparateZ added.
+ - More iterative functions also added: FunctionStreak Function*Ring
+ - Added -f <frames> option to evolvotron_render
+ - Internals: function framework changed (avoids FunctionNodeUsing::evaluate wrapper), speed improvement ?
+ - Internals: Type of top-level node can mutate, MutatableImage more sane.
+ - "Undo" keyboard accelerator works 
+ - Per-image display "Properties" dialog added (placeholder)
+
+From release 0.1.4:
+ - Bump version to 0.2.0 
+ - Filenames converted to/from QString using Qt's "local8Bit" codec.
+ - -f option specifies number of frames (default 1, which is the non-animated behaviour of previous versions)
+ - -r option specifies framerate of full-resolution animation (default 8, about the minimum to look smooth) 
+ - Animations save to multiple files
+
+From release 0.1.3:
+ - Bump version to 0.1.4 
+ - Function tree growth rate restored to pre-0.1.2 rates
+ - Both multiscale noise types counted as iterative as originally intended.
+ - "Substitute" mutation type added.
+  
+From release 0.1.2:
+ - Bump version to 0.1.3 
+ - Build lib and separate executables.  Use qmake "subdirs" at top level, move code into subdirs.
+ - Add evolvotron_render executable.
+ - Add evolvotron_mutate executable.
+ - Better Args class.
+ - Fix bug in FunctionAverageSamples
+ - Add noise class
+ - Add more functions.
+ - Use better random number generator (MT)
+ - Changes to initial setup probabilities, add chance of identity nodes front and back
+
+From release 0.1.1:
+ - Bump version to 0.1.2.  This is purely a bug-fix release.
+ - Gentoo compile bug fix (Karl Robillard)
+ - Disable implicit QString conversion (use explicit latin1() method).
+ - Workround "C++ static initializer fiasco" by moving problem static members
+   into instance-get methods.
+ 
+From release 0.1.0:
+ - Bump version to 0.1.1
+ - Grid size now defaults to 7x5
+ - More functions!
+
+From release 0.0.5:
+ - Bump version to 0.1.0
+ - Fix nasty bug in computers where a task could be delivered and deleted while
+   the compute thread was still setting state in it
+   (timing related so it never happened with ccmalloc and valgrind).
+ - Massive internal changes necessary for file save/load
+   (also makes adding functions easier)
+ - Save/load individual functions to XML
+ - configure checks QTDIR defined (biggest cause of build problems)
+
+From release 0.0.4
+ - Bump version to 0.0.5
+ - configure script #!/bin/* changed to sh from csh
+ - Release tar files now unpack to a ./evolvotron directory
+ - More "Big" size options
+ - Big image can create big images
+ - Big image's initial window size decided by Qt
+ - Spawn warped offers more specific controls (zoom/pan/rotate)
+ - Middle mouse button does stuff (pan/zoom/rotate/shear)
+ - Undo menu entry describes type of action which will be undone
+ - Closing a big image cleans up undo history appropriately
+ - Bug with assumed EvolotronMain/MutableImageDisplay destructor order fixed.
+
+From release 0.0.3:
+ - Bump version to 0.0.4
+ - More interesting start up functions
+ - More functions (e.g rotation and spirals, geometric inverse, iterated fns, fractals...)
+ - Controls to enable/disable expensive/ugly iterative and fractal functions (default off).
+ - Fix dumb bug in xy range of image
+   (makes everything generally behave a lot better; most noticeable with warp)
+ - "Identity supression" control which helps eliminate/reduces obvious origin centering.
+ - "Proportion constant" control (doesn't seem to have that much effect).
+ - Separate reset/restart functionality (reset also resets mutation parameters).
+ - Move Cool/Shield buttons to be adjacent (commonly used together).
+ - "is_constant" query method used to eliminate boring constant images.
+ - x&y co-ordinate alignment fixed (not something users would notice)
+ - Spawn warped made less messy: just generates translate/scale/rotate... no shearing.
+ - Reset clears locks / restart doesn't
+ - Gratuitously templatized tuple/matrix class added to help geometric transforms.
+ - Add "configure" script 'cos thats how lots of other apps do it.  Apparently.
+
+From release 0.0.2:
+ - Bump version to 0.0.3
+ - Add command line arg control of grid size and threads, don't override -geometry
+ - GUI control of mutation parameters
+ - "Respawn" regenerates a single display area using spawn/recolour/warp as appropriate.
+ - "Cancel" in file save dialog obeyed.
+ - "Insert" mutation type.
+ - "Undo" functionality.
+
+From release 0.0.1:
+ - Bump version to 0.0.2
+ - Switch to QMainWindow base in anticipation of toolbar.
+ - Save as PPM or PNG
+ - Scrollable fixed-size image "Big" windows.
+ - Improvements to app response under load.
+
+From release 0.0.0:
+ - Bump version to 0.0.1
+ - Add volatile to inter-thread communication flags
+ - Added a few more image node function types
+ - Add "spawn_recoloured"
+ - Add "spawn_warped"
+

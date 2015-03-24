@@ -1,0 +1,276 @@
+NOTE
+====
+There is a ./configure script here, but it's NOT autoconf generated.
+evolvotron is built using the qmake utility which is part of Qt.
+However, most users should be able to 
+  ./configure ; make
+PROVIDED their environment is set up correctly.
+Page down to the BUILDING section for more info.
+
+INTRODUCTION
+============
+
+Evolvotron is interactive "generative art" software to evolve
+images/textures/patterns through an iterative process of random
+mutation and user-selection driven evolution.  If you like lava-lamps,
+and still think the Mandelbrot set is cool, this could be the software
+for you.
+
+It uses C++ (and STL+Boost) & Qt (which is Trolltech's Qt GUI
+toolkit; it's ABSOLUTELY NOTHING TO DO WITH APPLE'S QUICKTIME!).
+It's multithreaded (using Qt's threading API).
+
+Home page: http://www.bottlenose.demon.co.uk/share/evolvotron
+Author: timday at timday dot com
+
+This file describes how to build evolvotron.
+See the USAGE file for details of what the built executable can do.
+
+If you manage to make practical use of evolvotron, especially
+if evolvotron derived imagery makes it into print or other
+mass media, I'd love to hear about it: please email!
+
+Have fun
+Tim
+
+LICENSE
+=======
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+[The license should be in the LICENSE file in the same directory as this
+README]
+
+BUILDING
+========
+There's no reason it shouldn't work on any platform with a correctly
+set up qmake.  [A simple python script is now also used to build the
+online documentation; I'm hoping this won't cause any problems]
+You do NOT need to be root (there is no install stage).
+
+In the top level directory, you can either do
+
+  ./configure
+  make
+
+or just have both done for you by doing
+
+  ./BUILD
+
+[Note that the BUILD script also adds $QTDIR/bin to the path while it runs the 
+commands, and is probably the easiest way to build if your PATH doesn't 
+include a directory containing qmake and you like it that way.]
+
+Make will recurse into and build the libfunction & libevolvotron directories
+(which is 99% of the work) and some additional subdirectories with 
+executables.
+
+Among other things, this will give you an "evolvotron" 
+executable which you can run immediately with
+  ./evolvotron/evolvotron
+and/or copy where you like (there are no shared libs or "resource files"
+needing additional attention). 
+
+See the USAGE file (or in-app manual) for instructions.
+
+BUILD PROBLEMS
+==============
+
+Short story
+-----------
+
+1. Check you have your QTDIR environment variable defined correctly.
+2. Check your PATH will find qmake (i.e do "which qmake") 
+   (adding $QTDIR/bin to your path will fix this on many distros;
+   note that the BUILD script does this when it runs).
+3. If your system appears to have some qt libraries, but not qmake,
+   you probably need to install a Qt development tools package
+   of some sort before you can build evolvotron.
+
+The 0.6.0 code builds against Boost 1.35
+
+Non-linux platform issues
+-------------------------
+On the whole, Qt does an excellent job of insulating code from
+platform specific details.  However, there is a little bit of
+linux-specific code in evolvotron.
+
+If you don't have a PLATFORM_... define set, you'll get some warnings
+about no default implementations of functions in platform_specific.cpp,
+but should still get a working evolvotron (although missing some functionality
+with regard to automatically choosing how many threads to run and controlling
+thread priority).
+
+All the platform specific code should live in
+  libevolvtron/platform_specific.cpp
+and is selected by compile options
+  -DPLATFORM_LINUX or -DPLATFORM_BSD
+(with more potentially addable for other platforms).
+
+Setting the appropriate build options is most easily set by editing
+an appropriate
+  DEFINES+=PLATFORM_LINUX
+or 
+  DEFINES+=PLATFORM_BSD
+near the top of the
+  common.pro 
+file.  Qt doesn't make a fine enough distinction between unix platforms
+to decide completely automatically, and the situation is further complicated
+by e.g Fink's Qt not considering itself to be a Qt 'macx' build.
+
+Long story
+----------
+[These days the author primarily develops on Debian stable
+or testing.  The comments below re RedHat are based on experience
+with the now very old RH 8 & 9; they may or may not be applicable
+to Fedora.]
+
+QTDIR should point to your Qt installation.  Your Qt installation
+should be a directory somewhere (it might be /usr/share/qt3, it
+might be /usr/lib/qt3-gcc3.2, who knows), containing some or all
+of the subdirectories bin, doc, etc, include, lib, mkspecs, plugins.
+
+NB you might have more than one qt installation (e.g on Debian
+testing there is/was both /usr/share/qt and /usr/share/qt3).
+You probably want qt3 if there's a choice.
+I've never tried Qt4.
+
+RedHat defines QTDIR for the normal user environment,
+Debian needs QTDIR setting explicitly.
+
+Additionally QMAKESPEC might possibly need setting
+(only a Mandrake user has reported having to do this explicitly so far). 
+It will be something like "linux-g++" if you need to set it.
+Check the Qt docs for other architectures or perhaps look in your
+QT installation's mkspecs directory if you think you need this.
+
+Many build failures are simply because the necessary Qt build tools
+aren't in your path:
+  which qmake
+  which moc
+should both find something.
+
+RedHat makes life easy by putting these binaries in
+/usr/bin, but many distros leave them languishing in $QTDIR/bin, in which
+case you should either add this to your path or use the BUILD script 
+provided here (which sets it for the commands it runs).
+
+If you have gcc/c++ compile problems problems:
+
+If you have to change anything, the chances are it should be changed in
+common.pro.  Remember that any Makefiles you can see are generated
+by qmake from .pro files and therefore hacking on the Makefiles is
+generally a fruitless exercise.
+
+Some source releases have had problems with other versions of gcc than
+the ones I test on.  A COMPLETE record of a failed build would be
+appreciated (including the initial display of the gcc version).
+If you can fix it, then patches would be even better!
+
+And the hackiest build yet:
+A Debian (3.0r1) user reported Debian's Qt package not including qmake.
+(Having since played with Debian myself I now know this is probably
+because they didn't install the various Qt -dev and/or -dev-tools
+packages too).  They eventually got hold of a qmake from somewhere
+(builing Qt from source?).  Attempting a regular evolvotron build
+they apparently (unsurprisingly) encountered a header/library version
+incompatibility (old headers, new library) which was solved by
+hand editing the qmake-generated Makefile and adding "-I- -I. " in
+front of the other -I paths.  Yuk.
+
+BUILDING ON OTHER PLATFORMS
+===========================
+[Very old information now!]
+
+Linc Davis reports:
+  "I built it on a Mac with Qt installed via Fink (if you know what that is.)
+  All I had to do is add '$(QTDIR)/include/qt' to the include path and then
+  run make."
+
+Paolo Greppi built it on OSX like this:
+ - get qt for osx http://www.trolltech.com/download/qt/mac.html
+ - configure qt with -thread to compile threading support
+   (takes a lot of time)
+ - remember to:
+        sudo ln -sf /usr/local/qt/lib/libqt-mt.3.dylib /usr/lib
+ - and add this to .tcshrc in your home directory:
+        setenv QTDIR /usr/local/qt
+        setenv PATH $QTDIR/bin:$PATH
+        setenv DYLD_LIBRARY_PATH $QTDIR/lib
+ - modify the Makefile in evolvotron adding -lqt-mt at the end of LIBS
+ - cd libevolvotron
+   mv mutatable_image_computer_farm.c mutatable_image_computer_farm.cpp
+   mv mutatable_image_computer_task.c mutatable_image_computer_task.cpp
+ - make ... while compiling, it keeps saying
+   c++: unrecognized option `-pthread'
+   (but this doesn't seem to matter)
+
+INSTALL
+=======
+The evolvotron sources don't try to provide an installer.
+The assumption is that packagers will have a better idea of where
+files should be copied to on their systems, and the tools to do it.
+Doing
+  make install
+will recursively descend into the various build directories, but
+does nothing in each one.
+
+The things you're likely to want to install are
+(in order of interest):
+
+The main executable and man page:
+  ./evolvotron/evolvotron
+  ./man/man1/evolvotron.1
+
+User documentation (standalone version of the builtin manual):
+  USAGE
+An HTML version of the above:
+  ./evolvotron.html
+
+Command-line driven tools and their man pages:
+  ./evolvotron_render/evolvotron_render
+  ./man/man1/evolvotron_render.1
+  ./evolvotron_mutate/evolvotron_mutate
+  ./man/man1/evolvotron_mutate.1
+
+An unsuccessful experiment:
+  ./evolvotron_match/evolvotron_match
+
+There are NO extra supporting files built
+(e.g shared libraries, config files, "resource" files)
+which need to be in special places for the software to work.
+
+PACKAGING
+=========
+There are a few things which might be useful to packagers:
+
+mkdeb
+ - script to build .deb files (using the strangely unpopular
+"yada", and pbuilder).  This is used to build the .debs put
+up on sourceforge, but the "official" Debian ones (and Ubuntu
+derivatives) are more conventionally packaged by Gurkan Sengun. 
+Yada is obsoleted as of Debian's "Wheezy" release however.
+
+rpm/
+ - directory for contributed RPM related resources.
+
+BUILDING CODE DOCUMENTATION
+===========================
+If you have doxygen (and graphviz too) and want to build
+the source code documentation, execute 
+  ./mkdoc
+at the top level.
+The code documentation then appears in ./doc/html/
+This hasn't been tested in a long while now, although the
+doxygen commenting style has been kept up.

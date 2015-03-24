@@ -1,0 +1,259 @@
+Proximity to one end or the other of this list does not necessarily
+imply it will be done sooner or later than other items!
+
+Infrastructure
+--------------
+- Ditch yada; migrate to...? dh? (yada gone in Debian Wheezy and Ubuntu P.)
+
+Consequences of Qt4 port
+------------------------
+mutableimagedisplay actions need attention - hmmm shorcuts would need to be installed for the grid, then dispatched.
+Margins in display grid - add command line option to control size ?
+Why was DialogMutatableImageDisplay created with :QDialog(parent,0,TRUE) ?
+EvolvotronMain destructor called on close ?
+statusbar needs right justification ?
+New-style include files; move to common
+Lots of Qthingy* stuff needn't be declared in headers; clean up
+
+Conventional Mode
+-----------------
+- Migrate to a stock threading/thread pool/futures lib.
+- Just make "fullscreen mode support" be the default (and remove text in USAGE).
+- Link on webpage to gallery http://gigrafx.110mb.com/evolvotron/index.html
+- ...also flickr stuff (xargs?)
+- Mouse manipulations: frame rate should be clamped to allow some time to produce a nice image
+- At least split out evolvotron_main_history.cpp, even if the class remains nested in .h
+- Smaller fragments for big enlargements; seeing unused processors.
+- More feedback on when enlargements are ready for saving (have split tasks count now... need more ? yes)
+- Triangles quantization mode (c.f hexes, pixels and voxels)
+- Linear and cubic interpolation for pixel and voxel mode quantizer
+- Enlargement menu: submenus for square, 4:3, 8:5, 16:9. 16x10.  5:4 SXGA 1024x1024 is a bit of an oddball.
+  And name them, see http://en.wikipedia.org/wiki/Computer_display_standard
+
+- Friezegroups:
+  Cut taken out for 0.5.0 release.
+  Want cut and blend for those that support it.
+  Blend should use two functions in some cases.
+  Can't see how to blend cuts; needs something more like old warp approach.
+- Work out how to add warping/blending to the (frieze) symmetry groups so they dont look so "cut".
+  Hop        - Basic, Blend and Cut done.  Cut needs attn to fit in with spinhop.
+  Jump       - Basic, Blend and Cut done.  (Is just Hop with y=0 reflection).    Cut needs attn to fit in with spinhop.
+  Sidle      - Basic. Can't be blended or cut as there are only reflection lines.  (Could be blended, but doesn't hide much).
+  Spinjump   - Basic. No blend or cut as there are only reflection lines.  (Is just Sidle with y=0 reflection).  (Again, could blend but not much point).
+  Spinhop    - Basic. Blend done. Cut done.
+  Spinsidle  - todo
+  Step       - todo
+
+- Not entirely convinced by separate thread pool for enlargements.
+  On the other hand, do need some mechanism to progress enlargements
+  while working on main grid.
+- Add functions for the 17 "wallpaper" symmetry groups.
+  ref: http://www.scienceu.com/geometry/articles/tiling/wallpaper.html
+  Wikipedia http://en.wikipedia.org/wiki/Wallpaper_group is good.
+  Presumably there are 3D versions too.
+  See also http://www.mi.sanu.ac.yu/vismath/ana/ana5.htm
+- The function properties dialog could construct a QListView instead of just displaying the XML.
+  But then you'd want full editing capabilities too (and why not?)
+- When mutating parameters, have a chance of a "special" reset to "interesting" values, and maybe even patterns of values.
+- Debian transitioning Apps to Applications (post Etch) see bug #361418
+- GPLv3 ?  Don't understand what else needs to be (e.g Qt3 etc)
+- Maybe icon setting could do with some more attention; probably there are more things which should set it
+  (e.g respawn coloured) and loading could set a flag defering icon setting until that view is ready.
+- Boost post-1.33 changes usage of ptr_map, apparently.  (Waiting for 1.34 to hit Debian Testing).
+- MutatableImageComputer::push_todo could handle defer a bit better.
+  Actually, complete overhaul of queue/computer kill/defer/abort would be better.
+  Computers should check priority on head of queue periodically and switch if there's
+  something better to work on.
+- Move InstanceCounted out of useful.h (and #include <map> with it)
+- Changing lock state triggers a redisplay.
+  Lock state would be better associated with displays than MutatableImages,
+  but the history archive doesn't support anything but changing images; needs
+  additional abstraction of general notion of change of a display's state.
+  Can live with this for now.
+- Use reStructuredText instead of own python txt->html converter.
+  (Then use fracplanet htm->qml converter).
+- Mode (genesis mode?) which traverses grid, creating a new image every few seconds.
+  First click stops mode.  Useful for getting started.
+- Transform<->vector<real> should output basis vectors first, translation last.
+- is_constant not enough to avoid boring images.
+  Need to actually check amount of variation.
+- Get rid of heat/cool etc buttons cluttering up status bar
+  and just have (new) autocool tick, and reheat button ?
+- Functions with similar names probably do much the same
+  thing so reduce their weighting to avoid them dominating.
+- FriezeGroups should add an extra parameter for
+  repeat length rather than using 1 all the time.
+  Likewise for spheres.
+- Move LoadHandler out of mutatable image.
+- QFileDialog seems to support previewing; enable
+  it for file contents previewing in file dialog.
+- Internationalization.
+  Make it as easy as possible for contributors to submit new languages.
+- Ability to set animation mode from GUI (property of an image function ?)
+- Ability to set spheremap mode from GUI (property of an image function ?)
+- Keyboard shortcuts for all of reset/restart/remix
+- Display mutation parameters permanently on status bar.
+- Scripts entry on context menu; pipes XML to things in ~/.evolvotron/scripts directory
+- Make middle-mose-button adjustments work sensibly with -spheremap 
+- Option for save function to also generate thumbnail at the same time ?
+  (Maybe not with previewing)
+- Look into mime-type registration and auto-thumbnailing in nautilus, KDE etc
+  (pipe through evolvotron_render)
+- Browse window to show thumbnails for all .xml files in  a directory.
+- DialogFunctions and DialogMutationParameters don't notice when the other dialog modifies MutationParameters.
+  Fortunately this doesn't matter because they (will) control completely disjoint aspects of it.
+  Could do with proper model update propagation/validation if things get any more complex though..
+- linz and -spheremap need rationalising before we add more projections
+- Ability to change linz and spheremap attributes on properties menu.
+- Supplement spheremaps with... what ?  Cubemaps ?  Volume output ?
+- Heat/Cool etc buttons in status bar not very interesting.
+  Replace with autocool controls, or have them actually fire off
+  a respawn from the last spawned image; would get more of an idea
+  of how much effect there is then.
+- MutationParameters should be held by EvolvotronMain with pointers passed
+  to dialogs.
+- Different projections for evolvotron_render, maybe main app (e.g spheremaps, cubemaps, volumes).
+- Display properties dialog should have small copy of image
+- "Evolvotron corpus"; publish mode & viewer app to see other users' creations
+  How ?  Jabber conference!  (It's all XML).
+- Quick 'n easy way of pushing to Flickr ?
+- Proper dependency and generation by qmake of libevolvotron/usage_text.h
+- Rationalise configure options: fs/nofs (doc/nodoc?)
+- -h & --help option.  Print version and functions supported.
+- man pages ?  Knock off something simple.
+- Window ordering (and whether fullscreen) should be an input to
+  compute priority.  Need to be able to change priorities once tasks
+  are in queue, and re-order queue.
+- Give some sort of control over pixel aspect ratio.  
+  A nice circular image in a square display on the screen is 
+  squished when rendered to a rectangular image.
+  Best solution probably to offer cropped modes e.g "640x480 from 640x640".
+  Alternative solution would be 4:3 mode for the whole app where the evaluation
+  range is changed.  Harder to explain though.
+- [Local] Clean up evolvotron_admin/evolvotron_gallery
+- Check qmake can be found by configure.
+  Check $(QTDIR)/bin first... RH seem to be unusual in copying it to /usr/bin
+- evolvotron_render default output (or with filename "-") should be to stdout.
+  (The problem is that Qt's image writing libs only support file output).
+  Could create a /tmp file behind the scenes, or write something simple like PPM.
+- File save dialogs should remember which directory they were last accessing.
+  (Maybe a Qt problem)
+- Replace FunctionNode::stub() with FunctionRegistry based code
+- Create registry of all function node types (done)
+  - Use to bring up a panel for setting relative frequencies (check for exploding branching ratios)
+    - Button to spawn images with a specific type of top level node (would be great for testing)
+  - Allow iterative/allow fractal would then become convenience buttons for quick-setting a whole group of frequencies
+  - Classification scheme for function types (basic, smooth, chooser, complex, expensive).
+- More types of mutation
+  - Substitute a node for a different type, retaining it's settings (expand/cull as necessary)
+  - Nodes near top level should have more chance of mutation ?
+- evolvotron_mutate standalone exe should provide more control
+  (heat/cool/irradiate/shield options, recolour/warp options, animation options).
+- Combining/breeding image pairs.
+  Use drag-and-drop
+  Either:
+    Create a new top level node with 2 or more args and add the parents to it.
+    Create a new random stub and insert the parents at random points.
+    Insert one image at a random point into the other.
+    Concatenate (function compose) the 2 images (probably not v. interesting)
+  Need to prune too to keep size under control.
+- Get rid of silly xyz and matrix dependence on general tuples and templates.
+  (Can be well optimised, but only with heavyweight compile options.)
+- Profile & optimise.
+- Spawn recoloured could be linear, quadratic (or generalised?) versions.
+- Undo needs to save more state to work properly (e.g state for respawn)
+  Make history know about "MutatableImageHolders" rather than Displays,
+  and have last spawned be held in such an object too.
+- Have a function type which can suck in random images from directories of images
+  (specified by environmental variable ?)
+  Filename would need to be retained in node and XML for reproducibility.
+- Optimise drag: just recompute new area (needs image subregions for tasks).
+- Option (default on) to automatitcally respawn boring constant images as soon
+  as they've been computed to a certain resolution.
+- Web front end to commandline tools: an evolvotron web-server.
+- Command line option for border around images... use space to indicate locked status.
+- Maybe add "view" menu: like warp but just applying to current image (like drag)
+  (would need explicit control over amounts: maybe drag approach better ?).
+- Last method used should point to an object encapsulating the behaviour
+  (so warp spawn method can encapsulate a transform factory).
+  Needed for breeding behaviour (so can keep 2 last images).
+- Undo needs to restore _last_spawned too (but do above first and keep hisory of spawn methods).
+- Command line option to enable/disable fractal and iterative types.
+- "Unlock all" on edit menu
+- Reset & Restart: combine and bring up modal "are you sure" dialog box which can also contain check boxes for what to reset:
+    mutation parameters
+    function freqencies (when implemented)
+    locked displays
+- Quit should bring up "are you sure" dialog.
+- Option to increase number of iterations of certain types of iterative node in an image (i.e "accuracy")
+  (probably makes sense for Mandelbrot/Julia or a sampling blur where it just increases the detail, 
+  but less useful for repeated function mapping).
+- "Move all locked to start" on edit menu
+  (or move them to a "safe area", or save them in reloadable form).
+- Save whole grid as a single image (from File menu).
+- Save whole grid to an XML file.
+- Context menu option to bring up info about an image
+  (in particular number of nodes and max depth)
+- Reference counting for images
+  (far too much deepcloning currently; e.g to tasks and history).
+  But if it ain't broken don't fix it.
+- Use hourglass cursor over displays which haven't got final high resolution yet ?
+  (Really need combined hourglass/pointer cursor but Qt doesn't have one built in).
+- Computing zero co-ordinate sometimes gives unusual output (black lines across images).
+  Avoid by jittering co-ordinate (would break up jaggies), or just avoid exact zero ?
+- Why stop at screen resolution ? Antialiasing by supersampling.
+- Separate tool (?) to evolve images towards a given image.
+  How close would it get and how quickly ?  
+  Would the process of getting there be interesting (e.g as an animation) ?
+- Compute farms on multiple remote machines.
+- Menu options to add/remove rows/columns from display grid
+- Autocool of mutation parameters
+  (probably shouldn't be on by default; control from command line).
+- Heat/cool etc should act in proportion to current values
+  (probably wanted for autocool).
+- Evolve other things
+  e.g parameters of celluar automata/reaction diffusion equations/iterated function systems.
+- Rationalise MutatableImageNode::stub so more work is done by Node constructors
+  (just pass in a MutationParameters).  
+- Avoid misleading moire patterns by jittering samples
+- No low-res images option for when using remotely via X11 over slow link
+  (they take longer to display than compute) (running over compressed ssh helps a lot though).
+- Evolvotron_mutate should support -x/-X options.
+- Think of more functions:
+    Blending counterparts for switching/choosing functions.
+    Streaking version of windmill functions.
+    Generalised rotations
+    Square "Bhuddist mandala" versions of kaleidascope
+    Concentric rings
+    Iterative function generating a list of point co-ordinates... then test for blobs or make paths
+    (would be more efficient with a cached/precomputed element to functions).
+
+Animation
+---------
+- Could avoid bitBlt when reassembling fragmentary animation renders by fragmenting on
+  frame instead of by screen area.  Don't think this is a big enough deal (saves a bit
+  of copying in a little used feature) to be worth bothering with.
+- More warp types (rotate time into space etc)
+- More control over animation (frames & framerate) from edit/options menu
+  (or on a display by display basis ?  Then "big" images could have
+  more frames and higher framerates)
+- Ability to degrade temporal resolution with spatial resolution 
+  at low-res render levels
+- Support animation in evolvotron_render 
+- Sync animation to xmms beat somehow ?
+- Option to sweep z sinusoidally or linearly
+- Option to bounce or cycle z
+- Make frames, frame-rate, sine vs. linear, loop vs. bounce properties of the image.
+
+Extras
+------
+- evolvotron_match hasn't been seen to do much but converge
+  towards general overall color of target.  
+  Try matching in edge-detected space or something ?
+
+Rejected
+--------
+- Add #ifdef INSTANTIATE_FN (or move to .cpp) around evaluate methods
+  implemented in .h ?  Only really justifiable for fn .h included in multiple
+  places (not that many of them; NB function registration doesn't see these).
+  Not worth bothering with.

@@ -1,0 +1,112 @@
+#!/bin/bash
+
+# Before using this you probably need to install
+#   sudo pbuilder yada devscripts lintian cdebootstrap
+# and maybe dpkg-sig.  Also:
+# set up for sudo
+# set up pbuilder's /etc/pbuilderrc (maybe no attention needed these days)
+#   sudo pbuilder create --distribution squeeze
+# and/or update with 
+#   sudo pbuilder update
+# Expect a lot of warnings re LOGNAME - see Debian bug Bug#275118
+
+# TODO: DEBEMAIL
+
+VER=`./VERSION`
+
+TARBALL=evolvotron-${VER}.tar.gz
+
+if [ ! -s ${TARBALL} ] ; then
+    echo "Could't find ${TARBALL}" ; 
+    exit ;
+fi
+
+export DISTRIBUTION=`lsb_release -s -c`
+
+echo "*** Will package ${TARBALL} for distribution \"${DISTRIBUTION}\""
+echo -n "*** Starting in 5 seconds..."
+for t in 5 4 3 2 1 ; do sleep 1 ; echo -n "." ; done
+
+PROJECT=`echo $TARBALL | sed 's/-.*//'`
+TARBALLORIG="${PROJECT}_${VER}.orig.tar.gz"
+REV="1${DISTRIBUTION}1"
+
+WORKDIR=pkg_${VER}-${REV}
+rm -r -f ${WORKDIR}
+mkdir ${WORKDIR}
+cd ${WORKDIR}
+
+cp ../${TARBALL} ${TARBALLORIG}
+tar xvfz ${TARBALLORIG}
+mv ${PROJECT} ${PROJECT}-${VER}
+cd ${PROJECT}-${VER}
+sed -i "s/${VER}/${VER}-${REV}/g" VERSION
+
+mkdir debian
+dch --create --package evolvotron --distribution stable --newversion ${VER}-${REV} "Created by mkdeb script"
+
+cat << EOF > debian/packages
+Source: evolvotron
+Section: graphics
+Priority: extra
+Maintainer: Tim Day <timday@bottlenose.demon.co.uk>
+Standards-Version: 3.6.1
+Upstream-Source: <URL:http://sourceforge.net/projects/evolvotron/index.htm>
+Home-Page: <URL:http://www.bottlenose.demon.co.uk/share/evolvotron>
+Description: Interactive evolutionary texture generator
+Copyright: GPL
+ Copyright 2009 Tim Day
+Build-Depends: qt4-qmake,qt4-dev-tools,libqt4-dev,libqt4-xml,libboost-dev,libboost-program-options-dev,yada
+Build: sh
+ export QTDIR=/usr/share/qt4
+ # Note: yada install deals with DEB_BUILD_OPTIONS 'nostrip'
+ if [ "${DEB_BUILD_OPTIONS#*noopt}" != "$DEB_BUILD_OPTIONS" ]; then
+   ./configure "CONFIG -= release" "CONFIG += debug"
+ else
+   ./configure # No noticeable advantage in overriding qt optimisation options
+ fi
+ make
+Clean: sh
+ make distclean || make clean || true
+
+Package: evolvotron
+Architecture: any
+Depends: []
+Suggests: gimp
+Description: Interactive evolutionary texture generator
+ A "generative art" application to evolve images/textures/patterns through an 
+ iterative process of random mutation and user-selection driven evolution.
+ If you like lava lamps, and never got bored with the Mandelbrot Set,
+ this could be the software for you.
+Install: sh
+ yada install -bin evolvotron/evolvotron
+ yada install -bin evolvotron_mutate/evolvotron_mutate
+ yada install -bin evolvotron_render/evolvotron_render
+ yada install -bin evolvotron/evolvotron
+ yada install -doc evolvotron.html
+ yada install -doc BUGS TODO NEWS USAGE
+ yada install -man man/man1/evolvotron.1
+ yada install -man man/man1/evolvotron_mutate.1
+ yada install -man man/man1/evolvotron_render.1
+Menu: ?package(evolvotron): needs="X11" section="Applications/Graphics" title="Evolvotron" hints="Bitmap" command="/usr/bin/evolvotron" longtitle="Evolutionary art program"
+EOF
+
+yada rebuild
+
+cd ..
+dpkg-source -b ${PROJECT}-${VER} ${TARBALLORIG}
+
+# Alternative but inferior approach is apparently to do 
+#   dpkg-buildpackage -rfakeroot
+
+mkdir result
+echo "Building package"
+sudo pbuilder build --allow-untrusted --buildresult ./result ${PROJECT}_${VER}-${REV}.dsc
+
+sudo chown ${USER}:${USER} result/*
+
+RESULT=`(cd .. ; find ${WORKDIR} -name '*.deb')`
+echo "Results: ${RESULT}"
+echo "Don't forget to lintian ${RESULT}"
+echo 'Also dpkg-sig --sign builder -k $DPKGSIG_KEYID any .deb files'
+
