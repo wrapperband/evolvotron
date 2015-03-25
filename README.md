@@ -24,3 +24,7 @@ include a directory containing qmake and you like it that way.]
 This will give you an "evolvotron" 
 
    ./evolvotron/evolvotron
+
+With Ubuntu 14.10 needed to run before it compiled
+
+export QTDIR=/usr/lib/qt4/
